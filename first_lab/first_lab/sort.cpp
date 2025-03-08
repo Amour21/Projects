@@ -87,16 +87,13 @@ void selectSort(double* arr, int end) {
 }
 void insertSort(double* arr, int end) {
 	for (int i = 1; i < end; i++) {
-		double key = arr[i];  // Сохраняем текущий элемент
+		double key = arr[i];  
 		int j = i - 1;
 
-		// Сдвигаем элементы, которые больше ключевого, на одну позицию вправо
 		while (j >= 0 && arr[j] > key) {
-			arr[j + 1] = arr[j];  // Сдвигаем элемент вправо
+			arr[j + 1] = arr[j];  
 			j--;
 		}
-
-		// Вставляем ключ на правильное место
 		arr[j + 1] = key;
 	}
 }
