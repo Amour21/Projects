@@ -1,5 +1,5 @@
 #include <windows.h>
-#include <commdlg.h>  // Для диалогового окна выбора файла
+#include <commdlg.h>  
 #include <stdio.h>
 #include <windowsx.h>
 
@@ -7,16 +7,15 @@
 #define GRID_COLS 70
 #define CELL_SIZE 20
 #define TIMER_ID 1
-#define TIMER_INTERVAL 100 // Интервал таймера в миллисекундах
-int saveCounter = 0; // спец переменная для сохранений
-// Объявления функций
+#define TIMER_INTERVAL 100 // Г€Г­ГІГҐГ°ГўГ Г« ГІГ Г©Г¬ГҐГ°Г  Гў Г¬ГЁГ«Г«ГЁГ±ГҐГЄГіГ­Г¤Г Гµ
+int saveCounter = 0; 
+
 void LoadConfiguration(const wchar_t* filename);
 void SaveConfiguration(const wchar_t* filename);
 void ToggleGame();
 void UpdateGame();
 void DrawGrid(HDC hdc, COLORREF liveColor, COLORREF deadColor, COLORREF borderColor);
 
-// Глобальные переменные
 int grid[GRID_ROWS][GRID_COLS];
 bool isGameRunning = false;
 HWND hwnd;
@@ -28,30 +27,30 @@ void CreateGameMenu();
 void StartNewGame();
 void LoadSavedGame();
 
-// Функции для загрузки и сохранения конфигурации
+
 void LoadConfiguration(const wchar_t* filename) {
     FILE* file;
     errno_t err = _wfopen_s(&file, filename, L"r");
     if (err != 0) {
-        MessageBox(hwnd, L"Ошибка при открытии файла для загрузки конфигурации.", L"Ошибка", MB_OK | MB_ICONERROR);
+        MessageBox(hwnd, L"ГЋГёГЁГЎГЄГ  ГЇГ°ГЁ Г®ГІГЄГ°Г»ГІГЁГЁ ГґГ Г©Г«Г  Г¤Г«Гї Г§Г ГЈГ°ГіГ§ГЄГЁ ГЄГ®Г­ГґГЁГЈГіГ°Г Г¶ГЁГЁ.", L"ГЋГёГЁГЎГЄГ ", MB_OK | MB_ICONERROR);
         return;
     }
 
     int configRows, configCols;
-    fscanf_s(file, "%d %d", &configRows, &configCols); // Считываем размеры конфигурации из файла
+    fscanf_s(file, "%d %d", &configRows, &configCols); 
     if (configRows > GRID_ROWS || configCols > GRID_COLS) {
-        MessageBox(hwnd, L"Размер конфигурации превышает размеры игрового поля.", L"Ошибка", MB_OK | MB_ICONERROR);
+        MessageBox(hwnd, L"ГђГ Г§Г¬ГҐГ° ГЄГ®Г­ГґГЁГЈГіГ°Г Г¶ГЁГЁ ГЇГ°ГҐГўГ»ГёГ ГҐГІ Г°Г Г§Г¬ГҐГ°Г» ГЁГЈГ°Г®ГўГ®ГЈГ® ГЇГ®Г«Гї.", L"ГЋГёГЁГЎГЄГ ", MB_OK | MB_ICONERROR);
         fclose(file);
         return;
     }
-    // Проверяем, что размеры конфигурации не превышают размеров игрового поля
+    
     for (int row = 0; row < GRID_ROWS; row++) {
         for (int col = 0; col < GRID_COLS; col++) {
             if (row < configRows && col < configCols) {
-                fscanf_s(file, "%d", &grid[row][col]); // Считываем клетку из файла
+                fscanf_s(file, "%d", &grid[row][col]); 
             }
             else {
-                grid[row][col] = 0; // Заполняем оставшиеся клетки нулями
+                grid[row][col] = 0; 
             }
         }
     }
@@ -63,7 +62,7 @@ void SaveConfiguration(const wchar_t* filename) {
     FILE* file;
     errno_t err = _wfopen_s(&file, filename, L"w");
     if (err != 0) {
-        MessageBox(hwnd, L"Ошибка при открытии файла для сохранения конфигурации.", L"Ошибка", MB_OK | MB_ICONERROR);
+        MessageBox(hwnd, L"ГЋГёГЁГЎГЄГ  ГЇГ°ГЁ Г®ГІГЄГ°Г»ГІГЁГЁ ГґГ Г©Г«Г  Г¤Г«Гї Г±Г®ГµГ°Г Г­ГҐГ­ГЁГї ГЄГ®Г­ГґГЁГЈГіГ°Г Г¶ГЁГЁ.", L"ГЋГёГЁГЎГЄГ ", MB_OK | MB_ICONERROR);
         return;
     }
     fwprintf(file, L"%d %d\n", GRID_ROWS, GRID_COLS);
@@ -79,11 +78,10 @@ void SaveConfiguration(const wchar_t* filename) {
 }
 
 void SaveConfigurationWithCounter() {
-    // Формируем имя файла на основе счётчика
+    
     wchar_t filename[50];
     swprintf_s(filename, sizeof(filename) / sizeof(wchar_t), L"save_%d.txt", ++saveCounter);
 
-    // Сохраняем конфигурацию
     SaveConfiguration(filename);
 }
 
@@ -103,11 +101,9 @@ void UpdateGame() {
     for (int row = 0; row < GRID_ROWS; row++) {
         for (int col = 0; col < GRID_COLS; col++) {
             int liveNeighbors = 0;
-
-            // Проверяем соседей
             for (int i = -1; i <= 1; i++) {
                 for (int j = -1; j <= 1; j++) {
-                    if (i == 0 && j == 0) continue; // Пропускаем саму клетку
+                    if (i == 0 && j == 0) continue; 
                     int r = row + i;
                     int c = col + j;
                     if (r >= 0 && r < GRID_ROWS && c >= 0 && c < GRID_COLS) {
@@ -116,24 +112,21 @@ void UpdateGame() {
                 }
             }
 
-            // Применяем правила "Жизни"
             if (grid[row][col] == 1 && (liveNeighbors == 2 || liveNeighbors == 3)) {
-                newGrid[row][col] = 1; // Клетка остается живой
+                newGrid[row][col] = 1; 
             }
             else if (grid[row][col] == 0 && liveNeighbors == 3) {
-                newGrid[row][col] = 1; // Клетка рождается
+                newGrid[row][col] = 1; 
             }
         }
     }
-
-    // Копируем новое состояние обратно в сетку
     for (int row = 0; row < GRID_ROWS; row++) {
         for (int col = 0; col < GRID_COLS; col++) {
             grid[row][col] = newGrid[row][col];
         }
     }
 
-    InvalidateRect(hwnd, NULL, TRUE); // Перерисовываем окно
+    InvalidateRect(hwnd, NULL, TRUE); 
 }
 
 void DrawGrid(HDC hdc, COLORREF liveColor, COLORREF deadColor, COLORREF borderColor) {
@@ -144,25 +137,22 @@ void DrawGrid(HDC hdc, COLORREF liveColor, COLORREF deadColor, COLORREF borderCo
 
     
     if (!liveBrush || !deadBrush || !borderPen) {
-        MessageBox(hwnd, L"Ошибка при создании объектов рисования.", L"Ошибка", MB_OK | MB_ICONERROR);
+        MessageBox(hwnd, L"ГЋГёГЁГЎГЄГ  ГЇГ°ГЁ Г±Г®Г§Г¤Г Г­ГЁГЁ Г®ГЎГєГҐГЄГІГ®Гў Г°ГЁГ±Г®ГўГ Г­ГЁГї.", L"ГЋГёГЁГЎГЄГ ", MB_OK | MB_ICONERROR);
         return;
     }
 
     for (int row = 0; row < GRID_ROWS; row++) {
         for (int col = 0; col < GRID_COLS; col++) {
             RECT cellRect = { col * CELL_SIZE, row * CELL_SIZE, (col + 1) * CELL_SIZE, (row + 1) * CELL_SIZE };
-
-            // Выбираем кисть в зависимости от состояния клетки
             HBRUSH currentBrush = (grid[row][col] == 1) ? liveBrush : deadBrush;
             FillRect(hdc, &cellRect, currentBrush);
 
-            // Рисуем рамку вокруг клетки
             HGDIOBJ hOldPen = SelectObject(hdc, borderPen);
             MoveToEx(hdc, cellRect.left, cellRect.top, NULL);
-            LineTo(hdc, cellRect.right, cellRect.top); // Верхняя граница
-            LineTo(hdc, cellRect.right, cellRect.bottom); // Правая граница
-            LineTo(hdc, cellRect.left, cellRect.bottom); // Нижняя граница
-            LineTo(hdc, cellRect.left, cellRect.top); // Левая граница
+            LineTo(hdc, cellRect.right, cellRect.top); 
+            LineTo(hdc, cellRect.right, cellRect.bottom); 
+            LineTo(hdc, cellRect.left, cellRect.bottom); 
+            LineTo(hdc, cellRect.left, cellRect.top);
             SelectObject(hdc, hOldPen);
         }
     }
@@ -203,7 +193,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         if (wParam == VK_SPACE) {
             ToggleGame();
         }
-        if (wParam == VK_F5) { // Сохранение при нажатии F5
+        if (wParam == VK_F5) { 
             SaveConfigurationWithCounter();
         }
         break;
@@ -226,32 +216,31 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     return 0;
 }
 
-// Диалог выбора режима игры
+
 int ShowModeSelectionDialog(HWND hwnd) {
-    int result = MessageBox(hwnd, L"Выберите режим игры\n Да - Новая игра\n Нет - Загрузить игру\n Справка: пробел - пауза \n f5 сохранение",
-        L"Меню", MB_YESNO | MB_ICONQUESTION);
+    int result = MessageBox(hwnd, L"Г‚Г»ГЎГҐГ°ГЁГІГҐ Г°ГҐГ¦ГЁГ¬ ГЁГЈГ°Г»\n Г„Г  - ГЌГ®ГўГ Гї ГЁГЈГ°Г \n ГЌГҐГІ - Г‡Г ГЈГ°ГіГ§ГЁГІГј ГЁГЈГ°Гі\n Г‘ГЇГ°Г ГўГЄГ : ГЇГ°Г®ГЎГҐГ« - ГЇГ ГіГ§Г  \n f5 Г±Г®ГµГ°Г Г­ГҐГ­ГЁГҐ",
+        L"ГЊГҐГ­Гѕ", MB_YESNO | MB_ICONQUESTION);
     return result;
 }
 
-// Начало новой игры
 void StartNewGame() {
-    // Инициализируем сетку для новой игры
+
     for (int row = 0; row < GRID_ROWS; row++) {
         for (int col = 0; col < GRID_COLS; col++) {
             grid[row][col] = 0;
         }
     }
 
-    // Перерисовываем окно
+
     InvalidateRect(hwnd, NULL, TRUE);
 }
 
-// Функция для выбора файла с конфигурацией игры
-void LoadSavedGame() {
-    OPENFILENAME ofn;       // Структура для выбора файла
-    wchar_t szFile[260];    // Буфер для хранения пути к файлу
 
-    // Инициализируем структуру OPENFILENAME
+void LoadSavedGame() {
+    OPENFILENAME ofn;       
+    wchar_t szFile[260];    
+
+
     ZeroMemory(&ofn, sizeof(ofn));
     ofn.lStructSize = sizeof(ofn);
     ofn.hwndOwner = hwnd;
@@ -263,42 +252,42 @@ void LoadSavedGame() {
     ofn.lpstrFileTitle = NULL;
     ofn.nMaxFileTitle = 0;
     ofn.lpstrInitialDir = NULL;
-    ofn.lpstrTitle = L"Выберите файл сохранения";
+    ofn.lpstrTitle = L"Г‚Г»ГЎГҐГ°ГЁГІГҐ ГґГ Г©Г« Г±Г®ГµГ°Г Г­ГҐГ­ГЁГї";
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
-    // Открытие диалогового окна выбора файла
+
     if (GetOpenFileName(&ofn) == TRUE) {
         LoadConfiguration(ofn.lpstrFile);
-        InvalidateRect(hwnd, NULL, TRUE); // Перерисовываем окно
+        InvalidateRect(hwnd, NULL, TRUE);
     }
 }
 
-// Главное окно
+
 void CreateGameMenu() {
     int mode = ShowModeSelectionDialog(hwnd);
 
     if (mode == IDYES) {
-        StartNewGame(); // Начинаем новую игру
+        StartNewGame(); 
     }
     else if (mode == IDNO) {
-        LoadSavedGame(); // Загружаем игру из файла
+        LoadSavedGame();
     }
     else {
         PostQuitMessage(0);
     }
 }
 
-// Точка входа для Windows-приложений
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-    // Регистрация класса окна
+  
     WNDCLASS wc = { 0 };
     wc.lpfnWndProc = WindowProc;
     wc.hInstance = hInstance;
     wc.lpszClassName = L"LifeGameClass";
     RegisterClass(&wc);
 
-    // Создание окна
-    hwnd = CreateWindowEx(0, L"LifeGameClass", L"Игра Жизнь",
+   
+    hwnd = CreateWindowEx(0, L"LifeGameClass", L"Г€ГЈГ°Г  Г†ГЁГ§Г­Гј",
         WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
         800, 600, NULL, NULL, wc.hInstance, NULL);
 
@@ -306,9 +295,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         return 0;
     }
 
-    CreateGameMenu();  // Показываем диалог выбора режима игры
+    CreateGameMenu();  
 
-    // Показать окно и запустить цикл обработки сообщений
+ 
     ShowWindow(hwnd, nCmdShow);
     UpdateWindow(hwnd);
 
