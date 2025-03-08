@@ -1,0 +1,5 @@
+﻿  mega long.cpp
+C:\Users\Dmitriy Katyshev\source\repos\struct_mega_long\struct mega long\mega long.cpp(214,6): warning C4101: reverse: неиспользованная локальная переменная
+C:\Users\Dmitriy Katyshev\source\repos\struct_mega_long\struct mega long\mega long.cpp(242,31): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\Dmitriy Katyshev\source\repos\struct_mega_long\struct mega long\mega long.cpp(243,32): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+  struct mega long.vcxproj -> C:\Users\Dmitriy Katyshev\source\repos\struct_mega_long\x64\Debug\struct mega long.exe
